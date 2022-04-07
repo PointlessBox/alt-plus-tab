@@ -31,6 +31,8 @@ export default class Model {
         this._state = initial
     }
 
+    // TODO: Add tests for iterator
+    // TODO: Do ring-iteration with modulo
     private produceNewIterator(values: Tab[]): Generator<Tab> {
         return function*(values: Tab[]) {
             for (const tab of values)
