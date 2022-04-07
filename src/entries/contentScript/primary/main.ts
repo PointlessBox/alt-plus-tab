@@ -1,6 +1,8 @@
 import renderContent from "../renderContent";
 import logo from "~/assets/logo.svg";
 import "./style.css";
+import browser from "webextension-polyfill";
+import { Message } from "~/entries/shared/types";
 
 renderContent(
   import.meta.CURRENT_CONTENT_SCRIPT_CSS_URL,
@@ -14,3 +16,9 @@ renderContent(
   `;
   }
 );
+
+document.addEventListener("keydown", async (ev: KeyboardEvent) => {
+  console.log("keydown")
+  const windowId = await (await browser.windows.getCurrent()).id
+  browser.runtime.sendMessage({ windowId, event: ev } as Message)
+})

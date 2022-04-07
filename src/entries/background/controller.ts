@@ -1,9 +1,13 @@
+import browser from "webextension-polyfill";
+// import { Message } from "../shared/types";
 import Model from "./model";
-import { Tabs } from "./types";
+import { Tab, Tabs } from "./types";
 import { BrowserUtils } from "./utils";
 import View from "./view";
 
 export default class Controller {
+
+    private activatedByCmd: Promise<Tab> | null = null
 
     constructor(
         private _model: Model,
@@ -11,25 +15,46 @@ export default class Controller {
     ) {
         this.observeTabSelect(this._view.tabs)
         this.observeTabRemove(this._view.tabs)
+        this.observeKeybind()
     }
 
     private observeTabSelect(tabs: Tabs.Static) {
-        tabs.onHighlighted.addListener(async (highlightInfo: Tabs.OnHighlightedHighlightInfoType) => {
-            const tab = await BrowserUtils.getTab(highlightInfo.tabIds[0])
-            const windowIdFromTab = tab.windowId
-            const windowId = this._view.window.id
-            // If this tab is in the same window as the window that the controller corresponds to then add to model
-            if (windowIdFromTab && windowId && windowId === windowIdFromTab) {
-                this._model.unshift(tab)
+        tabs.onActivated.addListener(async (activeInfo: Tabs.OnActivatedActiveInfoType) => {
+            const tab = await BrowserUtils.getTab(activeInfo.tabId)
+            // Check if the given tab was activated by a command
+            let wasActivatedByCmd = false
+            if (this.activatedByCmd !== null) {
+                const activatedByCmd = await this.activatedByCmd
+                wasActivatedByCmd = activatedByCmd.id === tab.id
+            }
+            // If not, then add it to the tab model and reset the current iteration of tabs
+            if (!wasActivatedByCmd) {
+                const windowIdFromTab = tab.windowId
+                const windowId = this._view.window.id
+                // If this tab is in the same window as the window that the controller corresponds to then add to model
+                if (windowIdFromTab && windowId && windowId === windowIdFromTab) {
+                    this._model.unshift(tab)
+                }
+                this._model.resetIteration()
             }
         })
     }
 
     private observeTabRemove(tabs: Tabs.Static) {
-        tabs.onRemoved.addListener(async (tabId: number, _removeInfo: Tabs.OnRemovedRemoveInfoType) => {
+        tabs.onRemoved.addListener((tabId: number, _removeInfo: Tabs.OnRemovedRemoveInfoType) => {
             this._model.removeTabWithId(tabId)
         })
     }
 
-    // private observeKeybind()
+    private observeKeybind() {
+        this._view.commands.onCommand.addListener((cmd: string) => {
+            if (cmd === "activate") {
+                // for (const item of this._model.currentIteration) {
+                //     console.log(item)
+                // }
+                const tab = this._model.currentIteration.next().value
+                this.activatedByCmd = browser.tabs.update(tab.id, { active: true })
+            }
+        })
+    }
 }

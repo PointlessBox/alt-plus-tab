@@ -14,14 +14,12 @@
   "license": "MIT",
   "devDependencies": {
     "@samrum/vite-plugin-web-extension": "^0.1.1",
-    "@types/collections": "^5.1.2",
     "@types/webextension-polyfill": "^0.8.2",
     "typescript": "^4.5.4",
     "vite": "~2.8.0",
     "web-ext": "^6.6.0"
   },
   "dependencies": {
-    "collections": "^5.1.13",
     "webextension-polyfill": "^0.8.0"
   }
 }

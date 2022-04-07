@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { Tab, Tabs, Windows } from "./types";
+import { Tab, Tabs, Windows, Commands } from "./types";
 
 export const BrowserUtils = {
     getAllTabs(): Promise<Tab[]> {
@@ -20,5 +20,9 @@ export const BrowserUtils = {
 
     getTabsOfWindow(windowId: number): Promise<Tab[]> {
         return browser.tabs.query({ windowId })
+    },
+
+    getCommands(): Commands.Static {
+        return browser.commands
     }
 }

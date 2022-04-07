@@ -1,10 +1,18 @@
 const sharedManifest = {
-  // content_scripts: [
-  //   {
-  //     js: ["src/entries/contentScript/primary/main.ts"],
-  //     matches: ["*://*/*"],
-  //   },
-  // ],
+  content_scripts: [
+    {
+      js: ["src/entries/contentScript/primary/main.ts"],
+      matches: ["*://*/*"],
+    },
+  ],
+  commands: {
+    activate: {
+      suggested_key: {
+        default: "Alt+A",
+      },
+      description: "Switch between tabs"
+    }
+  },
   icons: {
     16: "icons/16.png",
     19: "icons/19.png",
@@ -17,10 +25,10 @@ const sharedManifest = {
     256: "icons/256.png",
     512: "icons/512.png",
   },
-  // options_ui: {
-  //   page: "src/entries/options/index.html",
-  //   open_in_tab: true,
-  // },
+  options_ui: {
+    page: "src/entries/options/index.html",
+    open_in_tab: true,
+  },
   permissions: [],
 };
 
@@ -42,10 +50,10 @@ export const ManifestV2 = {
   },
   browser_action: browserAction,
   manifest_version: 2,
-  // options_ui: {
-  //   ...sharedManifest.options_ui,
-  //   chrome_style: false,
-  // },
+  options_ui: {
+    ...sharedManifest.options_ui,
+    chrome_style: false,
+  },
   permissions: [...sharedManifest.permissions, "*://*/*"],
 };
 

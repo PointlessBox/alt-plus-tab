@@ -11,17 +11,31 @@ async function start() {
     console.log("Extension installed")
   })
 
-  browser.windows.onCreated.addListener(async (window) => {
+  // browser.windows.onCreated.addListener(async (window) => {
+  //   console.log("Window created")
+  //   const windowId = window.id
+  //   if (windowId) {
+  //     // Create MVC System for each window
+  //     const model = new Model(await BrowserUtils.getTabsOfWindow(windowId))
+  //     const view = new View(window, BrowserUtils.getStaticTabs())
+  //     const controller = new Controller(model, view)
+  //     // Save controller
+  //     controllers.push({ windowId, controller })
+  //   }
+  // })
+
+  for (const window of await BrowserUtils.getWindows().getAll()) {
     const windowId = window.id
     if (windowId) {
+      console.log("registering controller")
       // Create MVC System for each window
       const model = new Model(await BrowserUtils.getTabsOfWindow(windowId))
-      const view = new View(window, BrowserUtils.getStaticTabs())
+      const view = new View(window, BrowserUtils.getStaticTabs(), BrowserUtils.getCommands())
       const controller = new Controller(model, view)
       // Save controller
       controllers.push({ windowId, controller })
     }
-  })
+  }
 
   browser.windows.onRemoved.addListener((windowId) => {
     // Remove controller for corresponding window

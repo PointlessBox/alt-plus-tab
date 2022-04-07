@@ -1,6 +1,6 @@
-import browser, { Tabs, Windows } from "webextension-polyfill";
+import browser, { Tabs, Windows, Commands } from "webextension-polyfill";
 
 type Tab = browser.Tabs.Tab
 type Window = browser.Windows.Window
 
-export { Tab, Tabs, Window, Windows }
+export { Tab, Tabs, Window, Windows, Commands }
