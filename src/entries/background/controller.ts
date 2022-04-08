@@ -1,13 +1,17 @@
 import browser from "webextension-polyfill";
+import TimedValue from "~/tab-iter-timer/timed-value";
 // import { Message } from "../shared/types";
 import Model from "./model";
 import { Tab, Tabs } from "./types";
 import { BrowserUtils } from "./utils";
 import View from "./view";
 
+const RESET_TIME_IN_MILLIS = 500
+
 export default class Controller {
 
-    private activatedByCmd: Promise<Tab> | null = null
+    private activatedByCmd: Tab | null = null
+    private beginnerTab: TimedValue<Tab> | null = null
 
     constructor(
         private _model: Model,
@@ -25,7 +29,7 @@ export default class Controller {
                 // Check if the given tab was activated by a command
                 let wasActivatedByCmd = false
                 if (this.activatedByCmd !== null) {
-                    const activatedByCmd = await this.activatedByCmd
+                    const activatedByCmd = this.activatedByCmd
                     wasActivatedByCmd = activatedByCmd.id === currentTab.id
                 }
                 // If not, then add it to the tab model and reset the current iteration of tabs
@@ -39,6 +43,8 @@ export default class Controller {
                         this._model.prepend(previousTab)
                     }
                     this._model.resetIteration()
+                } else if (this.beginnerTab?.isDone) {
+                    this._model.prepend(this.beginnerTab.get()!!)
                 }
             }
         })
@@ -51,10 +57,20 @@ export default class Controller {
     }
 
     private observeKeybind() {
-        this._view.commands.onCommand.addListener((cmd: string) => {
+        this._view.commands.onCommand.addListener(async (cmd: string) => {
             if (cmd === "activate") {
                 const tab = this._model.currentIteration.next().value
-                this.activatedByCmd = browser.tabs.update(tab.id, { active: true })
+                // this.activatedByCmd = browser.tabs.update(tab.id, { active: true })
+                const updatedTab = await browser.tabs.update(tab.id, { active: true })
+                this.activatedByCmd = updatedTab
+                if (this.beginnerTab !== null) {
+                    if (this.beginnerTab.isDone) {
+                        this.beginnerTab = new TimedValue(RESET_TIME_IN_MILLIS, updatedTab)
+                        this.beginnerTab.start()
+                    } else {
+                        this.beginnerTab.waitLonger()
+                    }
+                }
             }
         })
     }
