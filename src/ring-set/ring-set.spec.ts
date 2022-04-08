@@ -51,4 +51,27 @@ describe("RingSet", () => {
             expect(iterator.next().value).to.equal(undefined) // '1' should be moved to the start
         })
     })
+    describe("infiniteIter()", () => {
+        it("should iterate over it's elements infinitely", () => {
+            const ringSet = new RingSet([1, 2])
+
+            const infIter = ringSet.infiniteIter()
+
+            let next = infIter.next()
+            expect(next.value).to.equal(1)
+            expect(next.done).to.equal(false)
+
+            next = infIter.next()
+            expect(next.value).to.equal(2)
+            expect(next.done).to.equal(false)
+
+            next = infIter.next()
+            expect(next.value).to.equal(1)
+            expect(next.done).to.equal(false)
+            
+            next = infIter.next()
+            expect(next.value).to.equal(2)
+            expect(next.done).to.equal(false)
+        })
+    })
 })
