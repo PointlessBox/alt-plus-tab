@@ -51,6 +51,17 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var RingSet = /** @class */ (function () {
     function RingSet(initial) {
@@ -68,6 +79,8 @@ var RingSet = /** @class */ (function () {
      * @param value to append
      */
     RingSet.prototype.append = function (value) {
+        if (this._set.has(value))
+            this._set.delete(value);
         this._set.add(value);
     };
     /**
@@ -77,29 +90,69 @@ var RingSet = /** @class */ (function () {
     RingSet.prototype.prepend = function (value) {
         this._set = new Set(__spreadArray([value], __read(this._set), false));
     };
-    RingSet.prototype.produceIterator = function () {
-        return function (values) {
-            var valueList, index;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        valueList = __spreadArray([], __read(values), false);
-                        index = 0;
-                        _a.label = 1;
-                    case 1: return [4 /*yield*/, valueList[index % valueList.length]];
-                    case 2:
-                        _a.sent();
-                        _a.label = 3;
-                    case 3:
-                        index++;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        }(this._set.values());
+    RingSet.prototype.produceIterator = function (values, infinite) {
+        if (infinite === void 0) { infinite = false; }
+        var iter = infinite
+            ? function (values) {
+                var valueList, index;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            valueList = __spreadArray([], __read(values), false);
+                            index = 0;
+                            _a.label = 1;
+                        case 1: return [4 /*yield*/, valueList[index % valueList.length]];
+                        case 2:
+                            _a.sent();
+                            _a.label = 3;
+                        case 3:
+                            index++;
+                            return [3 /*break*/, 1];
+                        case 4: return [2 /*return*/];
+                    }
+                });
+            }(values)
+            : function (values) {
+                var values_1, values_1_1, value, e_1_1;
+                var e_1, _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _b.trys.push([0, 5, 6, 7]);
+                            values_1 = __values(values), values_1_1 = values_1.next();
+                            _b.label = 1;
+                        case 1:
+                            if (!!values_1_1.done) return [3 /*break*/, 4];
+                            value = values_1_1.value;
+                            return [4 /*yield*/, value];
+                        case 2:
+                            _b.sent();
+                            _b.label = 3;
+                        case 3:
+                            values_1_1 = values_1.next();
+                            return [3 /*break*/, 1];
+                        case 4: return [3 /*break*/, 7];
+                        case 5:
+                            e_1_1 = _b.sent();
+                            e_1 = { error: e_1_1 };
+                            return [3 /*break*/, 7];
+                        case 6:
+                            try {
+                                if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
+                            }
+                            finally { if (e_1) throw e_1.error; }
+                            return [7 /*endfinally*/];
+                        case 7: return [2 /*return*/];
+                    }
+                });
+            }(values);
+        return iter;
     };
     RingSet.prototype.iterator = function () {
-        return this.produceIterator();
+        return this.produceIterator(this._set.values());
+    };
+    RingSet.prototype.infiniteIter = function () {
+        return this.produceIterator(this._set.values(), true);
     };
     /**
      * Calls the given callback for each element.
