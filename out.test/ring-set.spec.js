@@ -59,9 +59,21 @@ var ring_set_1 = require("./ring_set");
             next = infIter.next();
             (0, chai_1.expect)(next.value).to.equal(2);
             (0, chai_1.expect)(next.done).to.equal(false);
-            next = infIter.next();
+        });
+    });
+    (0, mocha_1.describe)("iterator()", function () {
+        (0, mocha_1.it)("should iterate over it's elements", function () {
+            var ringSet = new ring_set_1.default([1, 2]);
+            var iter = ringSet.iterator();
+            var next = iter.next();
             (0, chai_1.expect)(next.value).to.equal(1);
             (0, chai_1.expect)(next.done).to.equal(false);
+            next = iter.next();
+            (0, chai_1.expect)(next.value).to.equal(2);
+            (0, chai_1.expect)(next.done).to.equal(false);
+            next = iter.next();
+            (0, chai_1.expect)(next.value).to.equal(undefined);
+            (0, chai_1.expect)(next.done).to.equal(true);
         });
     });
 });

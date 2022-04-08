@@ -74,4 +74,23 @@ describe("RingSet", () => {
             expect(next.done).to.equal(false)
         })
     })
+    describe("iterator()", () => {
+        it("should iterate over it's elements", () => {
+            const ringSet = new RingSet([1, 2])
+
+            const iter = ringSet.iterator()
+
+            let next = iter.next()
+            expect(next.value).to.equal(1)
+            expect(next.done).to.equal(false)
+
+            next = iter.next()
+            expect(next.value).to.equal(2)
+            expect(next.done).to.equal(false)
+
+            next = iter.next()
+            expect(next.value).to.equal(undefined)
+            expect(next.done).to.equal(true)
+        })
+    })
 })
