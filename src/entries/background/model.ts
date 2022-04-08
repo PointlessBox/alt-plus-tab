@@ -2,6 +2,7 @@
  * Contains the model from MVC Pattern
  */
 
+import RingArraySet from "~/ring-array-set/ring-array-set"
 import { Tab } from "./types"
 
 /**
@@ -13,7 +14,7 @@ export default class Model {
     /**
      * History of browser tabs represented as a sorted set in reversed chronological order.
      */
-    private _state: Tab[] = []
+    private _state: RingArraySet<Tab> = new RingArraySet()
 
     private _currentIterator: Generator<Tab> | null = null
     
@@ -23,12 +24,8 @@ export default class Model {
         return this._currentIterator!!
     }
     
-    public get tabs(): Tab[] {
-        return this._state
-    }
-    
     constructor (initial: Tab[]) {
-        this._state = initial
+        this._state = new RingArraySet(initial)
     }
 
     private produceNewIterator(values: Tab[]): Generator<Tab> {
@@ -46,10 +43,10 @@ export default class Model {
      * Adds the given tab to the beginning of the history.
      * @param tab Tab to add
      */
-    unshift(tab: Tab) {
+    prepend(tab: Tab) {
         if (tab.id) {
             // this.removeTabWithId(tab.id) // Remove the unshifted tab to prevent duplicates
-            this._state.unshift(tab)
+            this._state.prepend(tab)
         }
     }
 

@@ -140,4 +140,49 @@ describe("RingArraySet", () => {
             expect(ringArraySet.length).to.equal(initial.length + 2)
         })
     })
+    describe("delete(value)", () => {
+        it("should delete the given element if it is equal to an element inside the RingArraySet by comparing them with ===", () => {
+            const initial = [1, 2]
+            const ringArraySet = new RingArraySet(initial)
+
+            ringArraySet.delete(1)
+
+            expect(ringArraySet.iterator().next().value).to.equal(2)
+
+            const someObj = { x: 1, y: 2 }
+            const secondRingArraySet = new RingArraySet([someObj])
+
+            secondRingArraySet.delete(someObj)
+
+            expect(secondRingArraySet.iterator().next().value).to.equal(undefined)
+        })
+        it("should NOT delete the given element if it is NOT equal to an element inside the RingArraySet by comparing them with ===", () => {
+            const someObj = { x: 1, y: 2 }
+            const ringArraySet = new RingArraySet([someObj])
+
+            const otherObj = { x: 1, y: 2 }
+            ringArraySet.delete(otherObj)
+
+            expect(ringArraySet.iterator().next().value).to.equal(someObj)
+        })
+    })
+    describe("deleteBy(condition)", () => {
+        it("should delete all element that match the given condition", () => {
+            const initial = [1, 2, 0]
+            const ringArraySet = new RingArraySet(initial)
+
+            ringArraySet.deleteBy((value) => value < 2)
+
+            const iterator = ringArraySet.iterator()
+            expect(iterator.next().value).to.equal(2)
+            expect(iterator.next().value).to.equal(undefined)
+
+            const someObj = { x: 1, y: 2 }
+            const secondRingArraySet = new RingArraySet([someObj])
+
+            secondRingArraySet.deleteBy((value) => value.x === 1)
+
+            expect(secondRingArraySet.iterator().next().value).to.equal(undefined)
+        })
+    })
 })

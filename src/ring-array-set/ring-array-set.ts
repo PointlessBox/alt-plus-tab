@@ -27,6 +27,27 @@ export default class RingArraySet<T> {
         return this
     }
 
+    /**
+     * Deletes the given element by checking with === operator
+     * @param value to delete
+     * @returns this for method-chaining
+     */
+    delete(value: T): RingArraySet<T> {
+        this._set.delete(value)
+        return this
+    }
+
+    /**
+     * Deletes all elements that match the given condition
+     * @param condition to delete by
+     * @returns this for method-chaining
+     */
+    deleteBy(condition: (value: T, index?: number) => boolean): RingArraySet<T> {
+        const asArray = [...this._set]
+        this._set = new Set(asArray.filter((value, index) => !condition(value, index)))
+        return this
+    }
+
     private produceIterator(values: Iterable<T>, infinite: Boolean = false): Iterator<T> {
         let iter: Iterator<T> = infinite
             ? function*(values: Iterable<T>) {
@@ -43,10 +64,19 @@ export default class RingArraySet<T> {
         return iter
     }
 
+    /**
+     * Produces an iterator over all elements currently in this collection
+     * @returns an iterator over all elements of this collection
+     */
     iterator(): Iterator<T> {
         return this.produceIterator(this._set.values())
     }
 
+    /**
+     * Produces an infinite iterator over all elements currently in this collection.
+     * This iterator iterates like a ring over this collection and never runs out of values.
+     * @returns an iterator over all elements of this collection
+     */
     infiniteIter(): Iterator<T> {
         return this.produceIterator(this._set.values(), true)
     }
