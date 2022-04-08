@@ -55,8 +55,8 @@ export default class RingSet<T> {
      * @param thisArg object, that will be referenced with 'this' inside callback
      */
     forEach(callbackfn: (
-        value: T,
-        index: T,
+        value1: T,
+        value2: T,
         set: Set<T>
     ) => void, thisArg?: T): void {
         this._set.forEach(callbackfn, thisArg)

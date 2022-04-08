@@ -52,7 +52,7 @@ describe("RingSet", () => {
         })
     })
     describe("infiniteIter()", () => {
-        it("should iterate over it's elements infinitely", () => {
+        it("should produce each element infinitely in a ring", () => {
             const ringSet = new RingSet([1, 2])
 
             const infIter = ringSet.infiniteIter()
@@ -75,7 +75,7 @@ describe("RingSet", () => {
         })
     })
     describe("iterator()", () => {
-        it("should iterate over it's elements", () => {
+        it("should produce each element once", () => {
             const ringSet = new RingSet([1, 2])
 
             const iter = ringSet.iterator()
@@ -91,6 +91,22 @@ describe("RingSet", () => {
             next = iter.next()
             expect(next.value).to.equal(undefined)
             expect(next.done).to.equal(true)
+        })
+    })
+    describe("forEach()", () => {
+        it("should iterate over it's elements", () => {
+            const ringSet = new RingSet([1, 2])
+
+            const proof: { value1: number, value2: number }[] = []
+            ringSet.forEach((value1, value2) => {
+                proof.push({ value1, value2 })
+            })
+
+            expect(proof[0].value1).to.equal(1)
+            expect(proof[0].value2).to.equal(1)
+
+            expect(proof[1].value1).to.equal(2)
+            expect(proof[1].value2).to.equal(2)
         })
     })
 })

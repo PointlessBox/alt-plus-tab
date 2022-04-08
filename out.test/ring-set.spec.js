@@ -44,7 +44,7 @@ var ring_set_1 = require("./ring_set");
         });
     });
     (0, mocha_1.describe)("infiniteIter()", function () {
-        (0, mocha_1.it)("should iterate over it's elements infinitely", function () {
+        (0, mocha_1.it)("should produce each element infinitely in a ring", function () {
             var ringSet = new ring_set_1.default([1, 2]);
             var infIter = ringSet.infiniteIter();
             var next = infIter.next();
@@ -62,7 +62,7 @@ var ring_set_1 = require("./ring_set");
         });
     });
     (0, mocha_1.describe)("iterator()", function () {
-        (0, mocha_1.it)("should iterate over it's elements", function () {
+        (0, mocha_1.it)("should produce each element once", function () {
             var ringSet = new ring_set_1.default([1, 2]);
             var iter = ringSet.iterator();
             var next = iter.next();
@@ -74,6 +74,20 @@ var ring_set_1 = require("./ring_set");
             next = iter.next();
             (0, chai_1.expect)(next.value).to.equal(undefined);
             (0, chai_1.expect)(next.done).to.equal(true);
+        });
+    });
+    (0, mocha_1.describe)("forEach()", function () {
+        (0, mocha_1.it)("should iterate over it's elements", function () {
+            var ringSet = new ring_set_1.default([1, 2]);
+            var proof = [];
+            ringSet.forEach(function (value1, value2) {
+                proof.push({ value1: value1, value2: value2 });
+            });
+            console.dir(proof);
+            (0, chai_1.expect)(proof[0].value1).to.equal(1);
+            (0, chai_1.expect)(proof[0].value2).to.equal(1);
+            (0, chai_1.expect)(proof[1].value1).to.equal(2);
+            (0, chai_1.expect)(proof[1].value2).to.equal(2);
         });
     });
 });
