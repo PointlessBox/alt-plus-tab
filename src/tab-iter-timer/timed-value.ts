@@ -7,8 +7,11 @@ export default class TimedValue<T> {
     /**
      * Returns the given value if the timer is finished, else undefined
      * @returns the timed value or undefined
+     * @throws if the timer was not started
      */
     get(): T | undefined {
+        if (this._waiting === null)
+            throw new Error("Timer was not started. Start timer by calling start()");
         return this._done ? this._value : undefined
     }
     
@@ -24,7 +27,7 @@ export default class TimedValue<T> {
     /**
      * Starts the timer with
      */
-    begin() {
+    start() {
         this._waiting = setInterval(() => {
             this._done = true
             clearInterval(this._waiting!!)
