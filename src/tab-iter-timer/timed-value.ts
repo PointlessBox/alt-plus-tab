@@ -3,6 +3,7 @@ export default class TimedValue<T> {
     private _value: T
     private _done: boolean = false
     private _waiting: NodeJS.Timer | null = null
+    private _shouldWaitLonger: boolean = false
 
     /**
      * Returns the given value if the timer is finished, else undefined
@@ -29,8 +30,22 @@ export default class TimedValue<T> {
      */
     start() {
         this._waiting = setInterval(() => {
-            this._done = true
-            clearInterval(this._waiting!!)
+            if (this._shouldWaitLonger)
+                this._shouldWaitLonger = false
+            else {
+                this._done = true
+                clearInterval(this._waiting!!)
+            }
         }, this.threshold)
+    }
+
+
+    /**
+     * Forces the timer to wait one more [this.threshold] ms of time after the current timer ends.
+     * This does not add up, it just prevents the timer from stopping after it should end.
+     */
+    waitLonger() {
+        // Forces this._waiting to take one more round
+        this._shouldWaitLonger = true
     }
 }
