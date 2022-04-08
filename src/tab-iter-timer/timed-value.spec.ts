@@ -48,4 +48,20 @@ describe("ValueTimer(threshold, value)", () => {
             expect(timedValue.get()).to.equal(undefined)
         })
     })
+    describe("isDone", () => {
+        it("should be TRUE if the time ended", async () => {
+            const timedValue = new TimedValue(TEST_THRESHOLD, "DONE")
+            timedValue.start()
+
+            await sleep(TEST_THRESHOLD)
+            expect(timedValue.isDone).to.true
+        })
+        it("should be FALSE if the time ended", async () => {
+            const timedValue = new TimedValue(TEST_THRESHOLD, "DONE")
+            timedValue.start()
+
+            await sleep(TEST_THRESHOLD / 2)
+            expect(timedValue.isDone).to.false
+        })
+    })
 })

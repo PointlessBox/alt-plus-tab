@@ -2,6 +2,11 @@ export default class TimedValue<T> {
     
     private _value: T
     private _done: boolean = false
+    
+    public get isDone() : boolean {
+        return this._done
+    }
+    
     private _waiting: NodeJS.Timer | null = null
     private _shouldWaitLonger: boolean = false
 
