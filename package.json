@@ -10,7 +10,7 @@
     "dev": "vite",
     "serve:firefox": "web-ext run --start-url \"about:debugging#/runtime/this-firefox\"  --source-dir ./dist/",
     "serve:chrome": "web-ext run -t chromium --start-url \"https://google.com\" --source-dir ./dist/",
-    "test": "tsc src/**/*.ts --downlevelIteration --outDir out.test --target ES5 && mocha \"out.test/**/*.spec.js\""
+    "test": "rm -r out.test && tsc src/**/*.ts --downlevelIteration --outDir out.test --target ES5 && mocha \"out.test/**/*.spec.js\""
   },
   "license": "MIT",
   "devDependencies": {

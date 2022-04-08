@@ -1,4 +1,4 @@
-export default class RingSet<T> {
+export default class RingArraySet<T> {
 
     get length(): number { return this._set.size };
     private _set: Set<T>
@@ -11,18 +11,20 @@ export default class RingSet<T> {
      * Appends a value to the ring.
      * @param value to append
      */
-    append(value: T) {
+    append(value: T): RingArraySet<T> {
         if (this._set.has(value))
             this._set.delete(value)
         this._set.add(value)
+        return this
     }
 
     /**
      * Prepends a value to the ring.
      * @param value to prepend
      */
-    prepend(value: T) {
+    prepend(value: T): RingArraySet<T> {
         this._set = new Set([value, ...this._set])
+        return this
     }
 
     private produceIterator(values: Iterable<T>, infinite: Boolean = false): Iterator<T> {

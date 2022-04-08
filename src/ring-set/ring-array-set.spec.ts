@@ -1,27 +1,27 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import RingSet from "./ring_set";
+import RingArraySet from "./ring-array-set";
 
-describe("RingSet", () => {
+describe("RingArraySet", () => {
     describe("append(value)", () => {
         it("should append the value if it does NOT exists already", () => {
-            const ringSet = new RingSet([1, 2])
+            const ringArraySet = new RingArraySet([1, 2])
             
-            ringSet.append(3)
+            ringArraySet.append(3)
             
-            const iterator = ringSet.iterator()
+            const iterator = ringArraySet.iterator()
             iterator.next() // skip 1
             iterator.next() // skip 2
             expect(iterator.next().value).to.equal(3)
         })
         it("should remove the given value from it's current position and append it at the end", () => {
-            const ringSet = new RingSet([3, 1, 2])
+            const ringArraySet = new RingArraySet([3, 1, 2])
             
-            ringSet.append(3)
+            ringArraySet.append(3)
 
-            ringSet.forEach((val) => console.log(val))
+            ringArraySet.forEach((val) => console.log(val))
 
-            const iterator = ringSet.iterator()
+            const iterator = ringArraySet.iterator()
             expect(iterator.next().value).to.equal(1) // '3' should be moved to end
             expect(iterator.next().value).to.equal(2)
             expect(iterator.next().value).to.equal(3)
@@ -30,21 +30,21 @@ describe("RingSet", () => {
     })
     describe("prepend(value)", () => {
         it("should prepend a value at the start if it does NOT exists already", () => {
-            const ringSet = new RingSet([1, 2])
+            const ringArraySet = new RingArraySet([1, 2])
 
-            ringSet.prepend(3)
+            ringArraySet.prepend(3)
 
-            const iterator = ringSet.iterator()
+            const iterator = ringArraySet.iterator()
             expect(iterator.next().value).to.equal(3) // prepended value
             expect(iterator.next().value).to.equal(1)
             expect(iterator.next().value).to.equal(2)
         })
         it("should remove the given value from it's current position and prepend it at the end", () => {
-            const ringSet = new RingSet([2, 3, 1])
+            const ringArraySet = new RingArraySet([2, 3, 1])
 
-            ringSet.prepend(1)
+            ringArraySet.prepend(1)
 
-            const iterator = ringSet.iterator()
+            const iterator = ringArraySet.iterator()
             expect(iterator.next().value).to.equal(1) // prepended value
             expect(iterator.next().value).to.equal(2)
             expect(iterator.next().value).to.equal(3)
@@ -53,9 +53,9 @@ describe("RingSet", () => {
     })
     describe("infiniteIter()", () => {
         it("should produce each element infinitely in a ring", () => {
-            const ringSet = new RingSet([1, 2])
+            const ringArraySet = new RingArraySet([1, 2])
 
-            const infIter = ringSet.infiniteIter()
+            const infIter = ringArraySet.infiniteIter()
 
             let next = infIter.next()
             expect(next.value).to.equal(1)
@@ -76,9 +76,9 @@ describe("RingSet", () => {
     })
     describe("iterator()", () => {
         it("should produce each element once", () => {
-            const ringSet = new RingSet([1, 2])
+            const ringArraySet = new RingArraySet([1, 2])
 
-            const iter = ringSet.iterator()
+            const iter = ringArraySet.iterator()
 
             let next = iter.next()
             expect(next.value).to.equal(1)
@@ -95,10 +95,10 @@ describe("RingSet", () => {
     })
     describe("forEach()", () => {
         it("should iterate over it's elements", () => {
-            const ringSet = new RingSet([1, 2])
+            const ringArraySet = new RingArraySet([1, 2])
 
             const proof: { value1: number, value2: number }[] = []
-            ringSet.forEach((value1, value2) => {
+            ringArraySet.forEach((value1, value2) => {
                 proof.push({ value1, value2 })
             })
 
@@ -107,6 +107,37 @@ describe("RingSet", () => {
 
             expect(proof[1].value1).to.equal(2)
             expect(proof[1].value2).to.equal(2)
+        })
+    })
+    describe("length", () => {
+        it("should be equal to the number of initial elements added", () => {
+            const initial = [1, 2]
+            const ringArraySet = new RingArraySet(initial)
+
+            // length should equal length of 'initial' because it had no duplicates 
+            expect(ringArraySet.length).to.equal(initial.length)
+        })
+        it("should NOT get longer after appending or preceding a duplicate", () => {
+            const initial = [1, 2]
+            const ringArraySet = new RingArraySet(initial)
+
+            ringArraySet
+                .append(1)
+                .append(2)
+                .prepend(1)
+                .prepend(2)
+
+            expect(ringArraySet.length).to.equal(initial.length)
+        })
+        it("should get longer after appending or preceding a non-duplicate element", () => {
+            const initial = [1, 2]
+            const ringArraySet = new RingArraySet(initial)
+
+            ringArraySet
+                .append(3)
+                .prepend(4)
+
+            expect(ringArraySet.length).to.equal(initial.length + 2)
         })
     })
 })
