@@ -33,7 +33,7 @@ export default class Controller {
                 const windowId = this._view.window.id
                 // If this tab is in the same window as the window that the controller corresponds to then add to model
                 if (windowIdFromTab && windowId && windowId === windowIdFromTab) {
-                    this._model.unshift(tab)
+                    this._model.prepend(tab)
                 }
                 this._model.resetIteration()
             }

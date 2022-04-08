@@ -16,23 +16,15 @@ export default class Model {
      */
     private _state: RingArraySet<Tab> = new RingArraySet()
 
-    private _currentIterator: Generator<Tab> | null = null
+    private _currentIterator: Iterator<Tab> | null = null
     
-    public get currentIteration(): Generator<Tab> {
-        console.log(this._currentIterator)
-        this._currentIterator = this._currentIterator ?? this.produceNewIterator(this._state)
+    public get currentIteration(): Iterator<Tab> {
+        this._currentIterator = this._currentIterator ?? this._state.infiniteIter()
         return this._currentIterator!!
     }
     
     constructor (initial: Tab[]) {
         this._state = new RingArraySet(initial)
-    }
-
-    private produceNewIterator(values: Tab[]): Generator<Tab> {
-        return function*(values: Tab[]) {
-            for (const tab of values)
-                yield tab
-        }(values)
     }
 
     resetIteration() {
@@ -45,14 +37,11 @@ export default class Model {
      */
     prepend(tab: Tab) {
         if (tab.id) {
-            // this.removeTabWithId(tab.id) // Remove the unshifted tab to prevent duplicates
             this._state.prepend(tab)
         }
     }
 
     removeTabWithId(tabId: number) {
-        this._state = this._state.filter((tab: Tab) => {
-            tab.id !== tabId
-        })
+        this._state.deleteBy((item) => item.id === tabId)
     }
 }
